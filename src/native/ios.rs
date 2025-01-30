@@ -650,12 +650,15 @@ pub fn define_app_delegate() -> *const Class {
                                 // But when it's not blocking_event_loop it makes fps really drop with `setNeedsDisplay`.
                                 // I hope it will work the same on the real device.
                                 if conf.platform.blocking_event_loop {
+                                    msg_send_![&*view, performSelectorOnMainThread:sel!(display) withObject:nil waitUntilDone:YES];
                                     msg_send_![&*view, performSelectorOnMainThread:sel!(setNeedsDisplay) withObject:nil waitUntilDone:NO];
                                 } else {
                                     msg_send_![&*view, performSelectorOnMainThread:sel!(display) withObject:nil waitUntilDone:YES];
                                 }
                             }
                             AppleGfxApi::Metal => {
+                                // TODO I think we need a call to draw() here, similar to the one for display() in
+                                // the OpenGl case above.
                                 msg_send_![&*view, performSelectorOnMainThread:sel!(setNeedsDisplay) withObject:nil waitUntilDone:NO];
                             }
                         }
